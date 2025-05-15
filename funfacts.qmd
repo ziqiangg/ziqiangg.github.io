@@ -1,0 +1,17 @@
+---
+title: "fun facts"
+format: html
+---
+
+# Personal Introduction
+
+Outside of academics, I really enjoy staying active and one of my favorite hobbies is *playing volleyball*.
+
+# Academic Interests
+
+Among the modules I've taken so far, **Math 1** and **Math 2** have been my absolute favorites. I’ve enjoyed the logical thinking and problem-solving involved, and they’ve given me a strong foundation for understanding AI and data science concepts more deeply.
+
+# Looking Ahead
+
+I’m excited to continue exploring the intersections of math, AI, and real-world applications as I progress through the program.
+

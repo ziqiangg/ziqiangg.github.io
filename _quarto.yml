@@ -12,6 +12,8 @@ website:
         text: Home
       - href: about.qmd
         text: About
+      - href: funfacts.qmd
+        text: Fun Facts
 
 format:
   html:
