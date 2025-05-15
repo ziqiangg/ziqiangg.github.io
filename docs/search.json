@@ -4,7 +4,7 @@
     "href": "index.html",
     "title": "AAI1001",
     "section": "",
-    "text": "Welcome\nWelcome to my website! I’m a Year 1, Trimester 3 student studying Applied Artificial Intelligence at Singapore Institute of Technology. This site showcases my learning journey, experiments, and projects in AI, data science, and R programming.\n\n\nAbout Me\nHere’s a photo of me:\n\n\n\nMy Photo\n\n\n\n\nGetting Started\nThis is a Quarto website.\nTo learn more about Quarto websites, visit https://quarto.org/docs/websites.\n\n\nSample R Code\n1 + 1"
+    "text": "Welcome\nWelcome to my website! I’m a Year 1, Trimester 3 student studying Applied Artificial Intelligence at Singapore Institute of Technology. This site showcases my learning journey, experiments, and projects in AI, data science, and R programming.\n\n\nAbout Me\nHere’s a photo of me:\n &gt; “The best way to learn is by doing — and sharing what you’ve learned.”"
   },
   {
     "objectID": "about.html",
@@ -60,6 +60,6 @@
     "href": "funfacts.html",
     "title": "fun facts",
     "section": "",
-    "text": "Personal Introduction\nOutside of academics, I really enjoy staying active and one of my favorite hobbies is playing volleyball.\n\n\nAcademic Interests\nAmong the modules I’ve taken so far, Math 1 and Math 2 have been my absolute favorites. I’ve enjoyed the logical thinking and problem-solving involved, and they’ve given me a strong foundation for understanding AI and data science concepts more deeply.\n\n\nLooking Ahead\nI’m excited to continue exploring the intersections of math, AI, and real-world applications as I progress through the program."
+    "text": "Personal Introduction\nOutside of school, I enjoy:\n\nPlaying volleyball 🏐 — it helps me stay active and develop teamwork skills.\nMotorcycles - something that my father and I share a passion for. Dream Bike\nWorking on small coding projects\n\n\n\nAcademic Interests\nAmong the modules I’ve taken so far, Math 1 and Math 2 have been my absolute favorites. I’ve enjoyed the logical thinking and problem-solving involved, and they’ve given me a strong foundation for understanding AI and data science concepts more deeply.\n\n\nLooking Ahead\nI’m excited to continue exploring the intersections of math, AI, and real-world applications as I progress through the program."
   }
 ]
