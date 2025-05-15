@@ -1,6 +1,9 @@
 ---
 title: "Reflections"
-format: html
+format: 
+  html:
+    embed-resources: true
+    number-sections: true
 ---
 
 # ️ What is the GenAI tool you have used? Why did you choose it?

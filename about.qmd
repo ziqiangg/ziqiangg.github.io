@@ -1,6 +1,9 @@
 ---
 title: "FYP Project"
-format: html
+format: 
+  html:
+    embed-resources: true
+    number-sections: true
 ---
 
 # About This Site

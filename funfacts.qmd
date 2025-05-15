@@ -1,6 +1,9 @@
 ---
 title: "fun facts"
-format: html
+format: 
+  html:
+    embed-resources: true
+    number-sections: true
 ---
 
 # Personal Introduction
