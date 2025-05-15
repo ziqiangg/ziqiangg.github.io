@@ -1,6 +1,8 @@
 ---
 title: "AAI1001"
-format: html
+format: 
+  html:
+    embed-resources: true
 ---
 
 # Welcome
