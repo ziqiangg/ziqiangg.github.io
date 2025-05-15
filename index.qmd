@@ -12,14 +12,5 @@ Welcome to my website! I’m a Year 1, Trimester 3 student studying **Applied Ar
 Here’s a photo of me:
 
 ![My Photo](me.jpg)
+> “The best way to learn is by doing — and sharing what you've learned.”
 
-# Getting Started
-
-This is a Quarto website.
-
-To learn more about Quarto websites, visit <https://quarto.org/docs/websites>.
-
-# Sample R Code
-
-```{r}
-1 + 1

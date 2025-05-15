@@ -5,7 +5,11 @@ format: html
 
 # Personal Introduction
 
-Outside of academics, I really enjoy staying active and one of my favorite hobbies is *playing volleyball*.
+Outside of school, I enjoy:
+
+- Playing **volleyball** 🏐 — it helps me stay active and develop teamwork skills.
+- **Motorcycles** - something that my father and I share a passion for. [Dream Bike](https://motor-fan.jp/bikes/article/92467/){target="blank"}
+- Working on small coding projects
 
 # Academic Interests
 
