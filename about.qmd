@@ -11,7 +11,7 @@ format:
 This page presents the capstone project idea for my Final Year Project (FYP) in Applied Artificial Intelligence at Singapore Institute of Technology.
 
 # Capstone Project Idea:
-## **LiDAR and AI-Integrated Home Surveillance System for Elderly Safety**
+## **[LiDAR and AI-Integrated Home Surveillance System for Elderly Safety](https://arxiv.org/abs/2312.04037#:~:text=This%20survey%20offers%20an%20in-depth%20analysis%20of%20radar-based,with%20emphasis%20on%20Micro-Doppler%2C%20Range-Doppler%2C%20and%20Range-Doppler-Angles%20techniques.){target="blank}**
 
 ### Project Summary
 
