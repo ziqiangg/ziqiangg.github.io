@@ -2,16 +2,16 @@
   {
     "objectID": "index.html",
     "href": "index.html",
-    "title": "temp_web",
+    "title": "AAI1001",
     "section": "",
     "text": "Welcome\nWelcome to my website! I’m a Year 1, Trimester 3 student studying Applied Artificial Intelligence at Singapore Institute of Technology. This site showcases my learning journey, experiments, and projects in AI, data science, and R programming.\n\n\nAbout Me\nHere’s a photo of me:\n\n\n\nMy Photo\n\n\n\n\nGetting Started\nThis is a Quarto website.\nTo learn more about Quarto websites, visit https://quarto.org/docs/websites.\n\n\nSample R Code\n1 + 1"
   },
   {
     "objectID": "about.html",
     "href": "about.html",
-    "title": "About",
+    "title": "FYP Project",
     "section": "",
-    "text": "About this site\n\n1 + 1\n\n[1] 2"
+    "text": "This page presents the capstone project idea for my Final Year Project (FYP) in Applied Artificial Intelligence at Singapore Institute of Technology."
   },
   {
     "objectID": "docs/index.html",
@@ -37,6 +37,13 @@
   {
     "objectID": "FYP Project.html#lidar-and-ai-integrated-home-surveillance-system-for-elderly-safety",
     "href": "FYP Project.html#lidar-and-ai-integrated-home-surveillance-system-for-elderly-safety",
+    "title": "FYP Project",
+    "section": "LiDAR and AI-Integrated Home Surveillance System for Elderly Safety",
+    "text": "LiDAR and AI-Integrated Home Surveillance System for Elderly Safety\n\nProject Summary\nThe proposed project aims to develop an intelligent home surveillance system that combines LiDAR (Light Detection and Ranging) sensors with AI-based activity recognition models to monitor and enhance the safety of elderly individuals living alone.\n\n\nObjectives\n\nUtilize LiDAR for precise indoor environment mapping and motion tracking.\nDevelop AI models to detect critical events such as:\n\nFalls\nUnusual inactivity\nHazardous movements (e.g., wandering into unsafe areas)\n\nIntegrate real-time alert notifications to caregivers or family members via a secure dashboard or mobile app.\n\n\n\nKey Technologies\n\nLiDAR sensors for non-intrusive, privacy-preserving spatial awareness.\nComputer vision and deep learning models (e.g., LSTM, CNN) for human activity recognition.\nEdge AI deployment for low-latency, real-time monitoring.\nOptional: Fusion with IoT devices (e.g., wearables, smart home sensors).\n\n\n\nMotivation\nWith the global aging population rising, there is a growing demand for intelligent, privacy-respecting, and non-invasive surveillance systems to ensure the well-being of elderly individuals—especially those who live independently.\n\n\n🔧 Tools and Platforms\n\nPython / R for data processing and AI modeling\nTensorFlow / PyTorch for deep learning\nROS / Arduino / Raspberry Pi for sensor integration (if applicable)\nShiny / Quarto for building an interactive monitoring dashboard"
+  },
+  {
+    "objectID": "about.html#lidar-and-ai-integrated-home-surveillance-system-for-elderly-safety",
+    "href": "about.html#lidar-and-ai-integrated-home-surveillance-system-for-elderly-safety",
     "title": "FYP Project",
     "section": "LiDAR and AI-Integrated Home Surveillance System for Elderly Safety",
     "text": "LiDAR and AI-Integrated Home Surveillance System for Elderly Safety\n\nProject Summary\nThe proposed project aims to develop an intelligent home surveillance system that combines LiDAR (Light Detection and Ranging) sensors with AI-based activity recognition models to monitor and enhance the safety of elderly individuals living alone.\n\n\nObjectives\n\nUtilize LiDAR for precise indoor environment mapping and motion tracking.\nDevelop AI models to detect critical events such as:\n\nFalls\nUnusual inactivity\nHazardous movements (e.g., wandering into unsafe areas)\n\nIntegrate real-time alert notifications to caregivers or family members via a secure dashboard or mobile app.\n\n\n\nKey Technologies\n\nLiDAR sensors for non-intrusive, privacy-preserving spatial awareness.\nComputer vision and deep learning models (e.g., LSTM, CNN) for human activity recognition.\nEdge AI deployment for low-latency, real-time monitoring.\nOptional: Fusion with IoT devices (e.g., wearables, smart home sensors).\n\n\n\nMotivation\nWith the global aging population rising, there is a growing demand for intelligent, privacy-respecting, and non-invasive surveillance systems to ensure the well-being of elderly individuals—especially those who live independently.\n\n\n🔧 Tools and Platforms\n\nPython / R for data processing and AI modeling\nTensorFlow / PyTorch for deep learning\nROS / Arduino / Raspberry Pi for sensor integration (if applicable)\nShiny / Quarto for building an interactive monitoring dashboard"
