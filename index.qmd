@@ -1,11 +1,25 @@
 ---
-title: "temp_web"
+title: "AAI1001"
+format: html
 ---
+
+# Welcome
+
+Welcome to my website! I’m a Year 1, Trimester 3 student studying **Applied Artificial Intelligence** at **Singapore Institute of Technology**. This site showcases my learning journey, experiments, and projects in AI, data science, and R programming.
+
+# About Me
+
+Here’s a photo of me:
+
+![My Photo](me.jpg)
+
+# Getting Started
 
 This is a Quarto website.
 
-To learn more about Quarto websites visit <https://quarto.org/docs/websites>.
+To learn more about Quarto websites, visit <https://quarto.org/docs/websites>.
+
+# Sample R Code
 
 ```{r}
 1 + 1
-```
