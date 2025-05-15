@@ -7,8 +7,10 @@ format:
 ---
 
 # Welcome
-![](imgs/lab_sit_logo.png){width=80%}  # Image without caption
+
 Welcome to my website! I’m a Year 1, Trimester 3 student studying **Applied Artificial Intelligence** at **Singapore Institute of Technology**. This site showcases my learning journey, experiments, and projects in AI, data science, and R programming.
+
+![](imgs/lab_sit_logo.png){width=80%}  
 
 # About Me
 
