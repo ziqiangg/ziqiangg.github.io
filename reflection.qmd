@@ -1,0 +1,45 @@
+---
+title: "Reflections"
+format: html
+---
+
+# ️ What is the GenAI tool you have used? Why did you choose it?
+
+The GenAI tool I have used is **ChatGPT**. I chose this tool because it is known for its versatility, ease of use, and strong support for coding, writing, and explanation of technical concepts. It also integrates well with R and Python, which are relevant to my coursework in Applied Artificial Intelligence.
+
+# How did the GenAI tool help you in completing the assessment (with examples)?
+
+ChatGPT helped me in several ways during my assessments:
+
+- **Clarifying Concepts**: When I was unsure about how to format a Quarto website or configure a YAML file, ChatGPT explained it clearly and gave me ready-to-use examples.
+- **Code Assistance**: It provided code snippets for adding pages like `about.qmd` and `funfacts.qmd`, and helped troubleshoot issues such as broken navbars.
+- **Content Generation**: For example, it helped me draft personal introductions for my `funfacts.qmd` and ideas for my FYP project involving LiDAR and AI.
+- **Reflection Writing**: Like this very document—ChatGPT helped structure and phrase my thoughts into coherent sections.
+
+# What do you think are beneficial about the tool?
+
+Some benefits of using ChatGPT include:
+
+- **Fast and personalized support**, especially for technical tasks.
+- **Helps overcome writer’s block** by suggesting content or phrasing.
+- **Saves time** by generating clean and accurate code or explanations.
+- **Improves understanding** through interactive clarification of complex topics.
+
+# What do you think are challenging about the tool?
+
+Despite its benefits, there are a few challenges:
+
+- **Over-reliance**: It’s easy to become dependent on the tool instead of solving problems independently.
+- **Inaccuracy**: Occasionally, it may give outdated or incorrect suggestions, so double-checking is necessary.
+- **Lack of context**: If prompts are unclear or vague, the responses might miss the mark.
+
+# How do you think GenAI tools will assist you for your future study or work?
+
+In the future, I believe GenAI tools will:
+
+- **Assist with research** by summarizing papers and generating code for experiments.
+- **Support learning** by explaining new concepts interactively.
+- **Boost productivity** at work by helping write reports, debug code, or brainstorm ideas.
+- **Enable rapid prototyping** of AI solutions, especially when integrating new technologies like LiDAR or IoT.
+
+Overall, GenAI tools like ChatGPT will become a valuable co-pilot in both academic and professional settings.
