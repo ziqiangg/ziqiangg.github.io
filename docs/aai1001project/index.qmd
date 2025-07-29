@@ -731,25 +731,23 @@ datatable(
 )
 ```
 
-------------------------------------------------------------------------
+-------
 
 # Visualisation
-To properly deal with visual clutter of various dimensions, we determined that the optimal way to visualise the extensive female population data (counts by age band, year, marital status and labour status and also aggregated totals) and the intensive fertility rates (age-banded fertility rates and total fertility rate) in time series would be to utilise 3 dedicated plots:
+To properly deal with visual clutter of various dimensions, we determined that the optimal way to visualise the extensive female population data (counts by age band, year, marital status and labour status and also aggregated totals) and the intensive fertility rates (age-banded fertility rates and total fertility rate) in time series would be to utilise 2 dedicated plots:
 
-- Lower level dodged bar chart for age-banded population data (by age band, marital status, labour status & year) with overlaying age-banded fertility rate lines and points
-
-- Higher level dodged bar chart for aggregated population data (by marital status, labour status & year) with overlaying Total Fertility Rate line and points
+- Comprehensive dodged bar and line plot that allows the user to toggle between aggregated total fertility rate and female population (by year x marital status x labour status) or age banded-fertility rates and female population (by year x age-band x marital status x labour status)
 
 - Faceted dashboard for clear separate analysis of individual dimensions
 
-The combination of these 3 plots would give the user a comprehensive view of the socioeconomic realities of Singapore's fertility decline.
+The combination of these 2 plots would give the user a comprehensive view of the socioeconomic realities of Singapore's fertility decline.
 
+## Comprehensive Plot
+The *'Age-Band View'* allows for precise selection of marital status and labour status by age bands over the years. However, since the female populations is also split by age-band it is not meant to show aggregated totals of female population by marital status over the years. To view overall trends in female population of all ages, switch to the *'Overall View'*.
 
-## Lower Level Dodged Plot
-Use this visualisation for detailed inspection of fertility and female population labour participation trends by age-bands.
 ```{r}
-# Load and clean data
-filtered_dataset <- final_dataset |>
+# Load and clean data for Graph 1 (age_band != "All")
+filtered_dataset_1 <- final_dataset |>
   filter(age_band != "All") |>
   mutate(
     marital_status  = tools::toTitleCase(trimws(as.character(marital_status))),
@@ -757,264 +755,20 @@ filtered_dataset <- final_dataset |>
     age_band        = tools::toTitleCase(trimws(as.character(age_band))),
     count           = as.numeric(as.character(count)),
     fertility_rate  = as.numeric(as.character(fertility_rate)),
-    uom             = ifelse(age_band == "All", "per female", "per thousand females")  # Adding the unit of measurement column
+    uom             = ifelse(age_band == "All", "per female", "per thousand females")
   )
 
-# Calculate the aggregated total count for each year, marital status, and labour status
-aggregated_data <- filtered_dataset |>
+# Calculate the aggregated total count for Graph 1
+aggregated_data_1 <- filtered_dataset_1 |>
   group_by(year, marital_status, labour_status) |>
   summarise(total_count = sum(count, na.rm = TRUE), .groups = "drop")
 
-# Merge the aggregated total count with the original data
-filtered_dataset <- filtered_dataset |>
-  left_join(aggregated_data, by = c("year", "marital_status", "labour_status"))
+# Merge the aggregated total count with the original data for Graph 1
+filtered_dataset_1 <- filtered_dataset_1 |>
+  left_join(aggregated_data_1, by = c("year", "marital_status", "labour_status"))
 
-# SharedData for interactivity
-shared_data <- SharedData$new(filtered_dataset, group = "full_filter")
-
-# Filter controls
-filter_marital <- filter_select("filter_marital", "Marital Status:", shared_data, ~marital_status)
-filter_labour  <- filter_select("filter_labour", "Labour Status:", shared_data, ~labour_status)
-filter_ageband <- filter_select("filter_ageband", "Age Band:", shared_data, ~age_band)
-
-filter_year <- filter_slider(
-  "filter_year", 
-  "Select Year Range:", 
-  shared_data, 
-  ~year, 
-  step = 1  # Ensures the slider increments by 1 year at a time
-)
-
-# Custom Colors for Marital Status
-marital_colors <- c(
-  "Single" = "#32CD32",  # Light Green
-  "Married" = "#1E90FF",  # Dodger Blue
-  "Widowed_divorced" = "#FF4500"  # Orange Red
-)
-
-# Custom Colors for Age Bands
-age_colors <- setNames(brewer.pal(length(unique(filtered_dataset$age_band)), "Dark2"),
-                       unique(filtered_dataset$age_band))
-
-# Scaling factor
-scale_factor <- max(filtered_dataset$count, na.rm = TRUE) / max(filtered_dataset$fertility_rate, na.rm = TRUE)
-
-# Generate HTML for the custom legend
-age_bands <- na.omit(unique(filtered_dataset$age_band))  # Get unique age bands (excluding NA)
-
-# Split age bands into two columns (first 4 in col1, next in col2)
-col1_bands <- head(age_bands, 4)
-col2_bands <- tail(age_bands, length(age_bands) - 4)
-
-# Create HTML for both columns
-col1_html <- paste0(
-  sapply(col1_bands, function(b) {
-    sprintf('<div style="display: flex; align-items: center; gap: 5px; margin-bottom: 5px;">
-               <div style="width: 15px; height: 15px; background-color: %s; border-radius: 3px;"></div>
-               <span>%s</span>
-             </div>', age_colors[b], b)
-  }), 
-  collapse = ""
-)
-
-col2_html <- paste0(
-  sapply(col2_bands, function(b) {
-    sprintf('<div style="display: flex; align-items: center; gap: 5px; margin-bottom: 5px;">
-               <div style="width: 15px; height: 15px; background-color: %s; border-radius: 3px;"></div>
-               <span>%s</span>
-             </div>', age_colors[b], b)
-  }), 
-  collapse = ""
-)
-
-# Combined legend template
-combined_legend <- sprintf('
-<div style="display: flex; width: 100%%; gap: 15px; margin-top: 20px; font-family: Arial, sans-serif;">
-  <!-- Marital Status (1/3 width) -->
-  <div style="flex: 1; background-color: #f8f9fa; padding: 5px; border-radius: 5px; font-size: 12px;">
-    <div style="text-align: center; font-weight: bold; margin-bottom: 8px;">Marital Status</div>
-    <div style="display: flex; flex-direction: column; gap: 6px;">
-      <div style="display: flex; align-items: center; gap: 6px;">
-        <div style="width: 12px; height: 12px; background-color: #32CD32; border-radius: 3px;"></div>
-        <span>Single</span>
-      </div>
-      <div style="display: flex; align-items: center; gap: 6px;">
-        <div style="width: 12px; height: 12px; background-color: #1E90FF; border-radius: 3px;"></div>
-        <span>Married</span>
-      </div>
-      <div style="display: flex; align-items: center; gap: 6px;">
-        <div style="width: 12px; height: 12px; background-color: #FF4500; border-radius: 3px;"></div>
-        <span>Widowed/Divorced</span>
-      </div>
-    </div>
-  </div>
-  
-  <!-- Age Bands (2/3 width) -->
-  <div style="flex: 2; background-color: #f8f9fa; padding: 5px; border-radius: 5px; font-size: 12px;">
-    <div style="text-align: center; font-weight: bold; margin-bottom: 8px;">Age Band</div>
-    <div style="display: flex; gap: 15px;">
-      <div style="flex: 1;">%s</div>
-      <div style="flex: 1;">%s</div>
-    </div>
-  </div>
-</div>
-', col1_html, col2_html)
-
-# Plot
-p <- ggplot() +
-  geom_col(
-    data = shared_data,
-    aes(
-      x = factor(year),
-      y = count,
-      fill = marital_status,  # Segments by marital status
-      group = interaction(labour_status, marital_status),  # Ensure the bars are grouped by both labour and marital status
-      text = paste0(
-        "Year: ", year,
-        "<br>Marital Status: ", marital_status,
-        "<br>Labour Status: ", labour_status,
-        "<br>Age Band: ", age_band,  # Adding age band to the bars' tooltip
-        "<br>Count: ", comma(count),
-        "<br>Total: ", comma(total_count)  # Adding aggregated total count to the tooltip
-      )
-    ),
-    position = position_dodge(width = 0.7),  # Keep the dodge position
-    width = 0.6,
-    colour = "white",
-    size = 0.2,
-    alpha = 0.6  # Reduced alpha for better visibility of segments
-  ) +
-  geom_line(
-    data = shared_data,
-    aes(
-      x = as.factor(year),
-      y = fertility_rate * scale_factor,
-      group = age_band,
-      colour = age_band
-    ),
-    size = 0.8,  # Reduced line size for a more subtle appearance
-    alpha = 0.6  # Reduced alpha for the line
-  ) +
-  geom_point(
-    data = shared_data,
-    aes(
-      x = as.factor(year),
-      y = fertility_rate * scale_factor,
-      group = age_band,
-      colour = age_band,
-      text = paste0(
-        "Year: ", year,
-        "<br>Age Band: ", age_band,
-        "<br>Fertility Rate: ", round(fertility_rate, 2),
-        "<br>Unit: ", uom  # Added the unit of measurement (uom) to the hover tooltip
-      )
-    ),
-    size = 0.5,  # Reduced point size
-    alpha = 0.6  # Reduced point alpha for subtlety
-  ) +
-  scale_fill_manual(values = marital_colors) +  # Apply custom colors for marital status
-  scale_colour_manual(values = age_colors) +  # Apply custom colors for age bands
-  scale_y_continuous(
-    name = "Female Population (thousands)",
-    labels = comma
-  ) +
-  labs(
-    title = "Fertility Rates vs Labour Participation",
-    subtitle = "Bars: Segmented by Marital Status; Points: Fertility Rates by Age Band",
-    x = "Year",
-    caption = "Source: SingStat & data.gov.sg"
-  ) +
-  theme_minimal() +
-  theme(
-    plot.title = element_text(face = "bold"),
-    axis.text.x = element_text(angle = 45, hjust = 1),
-    legend.position = "none"  # No legend for now, as we've defined the colors manually
-  )
-
-# Plotly conversion (only points have tooltips)
-plotly_output <- ggplotly(p, tooltip = "text")  # Ensures the custom text in tooltips is used
-
-# Add vertical annotations for the years without data (1995, 2000, 2005)
-plotly_output <- plotly_output |> 
-  layout(
-    annotations = list(
-      list(
-        x = 5, y = 0, # for 1995 annotation
-        text = "No Data", 
-        showarrow = FALSE,
-        font = list(size = 12, color = "black", family = "Arial"),
-        textangle = 90,  # Rotate text vertically
-        xanchor = "center",
-        yanchor = "bottom"
-      ),
-      list(
-        x = 10, y = 0, # for 2000 annotation
-        text = "No Data", 
-        showarrow = FALSE,
-        font = list(size = 12, color = "black", family = "Arial"),
-        textangle = 90,  # Rotate text vertically
-        xanchor = "center",
-        yanchor = "bottom"
-      ),
-      list(
-        x = 15, y = 0, # for 2005 annotation
-        text = "No Data", 
-        showarrow = FALSE,
-        font = list(size = 12, color = "black", family = "Arial"),
-        textangle = 90,  # Rotate text vertically
-        xanchor = "center",
-        yanchor = "bottom"
-      )
-    )
-  )
-
-# Final UI Layout with Footnote
-tagList(
-  div(
-    style = "margin-bottom:20px;",
-    h3("Interactive Fertility & Labour Plot"),
-    p("Use filters to explore age-banded female labour force counts and age-banded fertility rates.")
-  ),
-  div(
-    style = "display: flex; gap: 15px; margin-bottom: 20px;",
-    filter_marital,
-    filter_labour,
-    filter_ageband
-  ),
-  div(
-    style = "margin-bottom: 20px;",
-    filter_year  # Add the year slider to the layout
-  ),
-  plotly_output,
-  
-  # Footnote Section
-  div(
-    style = "margin-top: 20px; font-size: 12px; color: #555; text-align: center;",
-    p("Population data for 1995, 2000, and 2005 are not available as the Comprehensive Labour Force Survey was not conducted in these years."),
-    p("Source: data.gov.sg & SingStat")
-  ),
-  
-  # Custom Legend Section
-  HTML(combined_legend)  # Display the custom legend
-)
-
-```
-
-**Summary of Improvements to weaknesses**
-
-- **Extended Analysis**: Compared to the 2019–2023 analysis of the original, our visualisation expands the scope to **fertility rates from 1991 to 2022**.
-
-- **Socio-Economic Factors**: The original visualisation lacked explanatory power for Singapore’s fertility decline. This plot introduces dimensions like **female population** by age-bands allowing users to evaluate female **labour status**, and **marital status** to reveal potential **causal relationships** between these and fertility rates.
-
-- **Age-Banded Fertility**: Instead of a single total fertility rate, this allows the user to inspect age-banded fertility rates  for **age bands 15–49 in 5-year increments**. This highlights how fertility behaviour shifts across cohorts potentially unveiling the reasons behind Singapore's declining fertility rate.
-
----
-
-## Higher Level Dodged Plot
-Use this visualisation to inspect aggregated totals of female population and fertility rates that are not separated by age bands.
-```{r}
-
-filtered_dataset <- final_dataset |>
+# Load and clean data for Graph 2 (age_band == "All")
+filtered_dataset_2 <- final_dataset |>
   filter(age_band == "All") |>
   mutate(
     marital_status  = tools::toTitleCase(trimws(as.character(marital_status))),
@@ -1022,71 +776,79 @@ filtered_dataset <- final_dataset |>
     age_band        = tools::toTitleCase(trimws(as.character(age_band))),
     count           = as.numeric(as.character(count)),
     fertility_rate  = as.numeric(as.character(fertility_rate)),
-    uom             = ifelse(age_band == "All", "per female", "per thousand females")  # Adding the unit of measurement column
+    uom             = ifelse(age_band == "All", "per female", "per thousand females")
   )
 
-# SharedData for interactivity
-shared_data <- SharedData$new(filtered_dataset, group = "full_filter")
+# SharedData for interactivity - Graph 1
+shared_data_1 <- SharedData$new(filtered_dataset_1, group = "graph1_filter")
 
-# Filter controls
-filter_marital <- filter_select("filter_marital", "Marital Status:", shared_data, ~marital_status)
-filter_labour  <- filter_select("filter_labour", "Labour Status:", shared_data, ~labour_status)
-filter_ageband <- filter_select("filter_ageband", "Age Band:", shared_data, ~age_band)
+# SharedData for interactivity - Graph 2  
+shared_data_2 <- SharedData$new(filtered_dataset_2, group = "graph2_filter")
 
-filter_year <- filter_slider(
-  "filter_year", 
-  "Select Year Range:", 
-  shared_data, 
-  ~year, 
-  step = 1  # Ensures the slider increments by 1 year at a time
+# SharedData for lines/points in Graph 2 (excluding missing years)
+shared_data_2_lines_points <- SharedData$new(
+  filtered_dataset_2 |> filter(!(year %in% c(1995, 2000, 2005))),
+  group = "graph2_filter"
 )
+
+# Filter controls for Graph 1
+filter_marital_1 <- filter_select("filter_marital_1", "Marital Status:", shared_data_1, ~marital_status)
+filter_labour_1  <- filter_select("filter_labour_1", "Labour Status:", shared_data_1, ~labour_status)
+filter_ageband_1 <- filter_select("filter_ageband_1", "Age Band:", shared_data_1, ~age_band)
+filter_year_1 <- filter_slider("filter_year_1", "Select Year Range:", shared_data_1, ~year, step = 1)
+
+# Filter controls for Graph 2
+filter_marital_2 <- filter_select("filter_marital_2", "Marital Status:", shared_data_2, ~marital_status)
+filter_labour_2  <- filter_select("filter_labour_2", "Labour Status:", shared_data_2, ~labour_status)
+filter_year_2 <- filter_slider("filter_year_2", "Select Year Range:", shared_data_2, ~year, step = 1)
 
 # Custom Colors for Marital Status
 marital_colors <- c(
-  "Single" = "#32CD32",  # Light Green
-  "Married" = "#1E90FF",  # Dodger Blue
-  "Widowed_divorced" = "#FF4500"  # Orange Red
+  "Single" = "#32CD32",
+  "Married" = "#1E90FF",
+  "Widowed_divorced" = "#FF4500"
 )
 
-# Custom Colors for Age Bands
-age_colors <- setNames(brewer.pal(length(unique(filtered_dataset$age_band)), "Dark2"),
-                       unique(filtered_dataset$age_band))
+# Custom Colors for Age Bands (Graph 1)
+age_colors_1 <- setNames(brewer.pal(length(unique(filtered_dataset_1$age_band)), "Dark2"),
+                         unique(filtered_dataset_1$age_band))
 
-# Scaling factor
-scale_factor <- max(filtered_dataset$count, na.rm = TRUE) / max(filtered_dataset$fertility_rate, na.rm = TRUE)
+# Custom Colors for Age Bands (Graph 2)
+age_colors_2 <- setNames(brewer.pal(length(unique(filtered_dataset_2$age_band)), "Dark2"),
+                         unique(filtered_dataset_2$age_band))
 
-# Generate HTML for the custom legend
-age_bands <- na.omit(unique(filtered_dataset$age_band))  # Get unique age bands (excluding NA)
+# Scaling factors
+scale_factor_1 <- max(filtered_dataset_1$count, na.rm = TRUE) / max(filtered_dataset_1$fertility_rate, na.rm = TRUE)
+scale_factor_2 <- max(filtered_dataset_2$count, na.rm = TRUE) / max(filtered_dataset_2$fertility_rate, na.rm = TRUE)
 
-# Split age bands into two columns (first 4 in col1, next in col2)
-col1_bands <- head(age_bands, 4)
-col2_bands <- tail(age_bands, length(age_bands) - 4)
+# Generate HTML for custom legends
+# Legend for Graph 1
+age_bands_1 <- na.omit(unique(filtered_dataset_1$age_band))
+col1_bands_1 <- head(age_bands_1, 4)
+col2_bands_1 <- tail(age_bands_1, length(age_bands_1) - 4)
 
-# Create HTML for both columns
-col1_html <- paste0(
-  sapply(col1_bands, function(b) {
+col1_html_1 <- paste0(
+  sapply(col1_bands_1, function(b) {
     sprintf('<div style="display: flex; align-items: center; gap: 5px; margin-bottom: 5px;">
                <div style="width: 15px; height: 15px; background-color: %s; border-radius: 3px;"></div>
                <span>%s</span>
-             </div>', age_colors[b], b)
+             </div>', age_colors_1[b], b)
   }), 
   collapse = ""
 )
 
-col2_html <- paste0(
-  sapply(col2_bands, function(b) {
+col2_html_1 <- paste0(
+  sapply(col2_bands_1, function(b) {
     sprintf('<div style="display: flex; align-items: center; gap: 5px; margin-bottom: 5px;">
                <div style="width: 15px; height: 15px; background-color: %s; border-radius: 3px;"></div>
                <span>%s</span>
-             </div>', age_colors[b], b)
+             </div>', age_colors_1[b], b)
   }), 
   collapse = ""
 )
 
-# Combined legend template
-combined_legend <- sprintf('
+combined_legend_1 <- sprintf('
 <div style="display: flex; width: 100%%; gap: 15px; margin-top: 20px; font-family: Arial, sans-serif;">
-  <!-- Marital Status (1/3 width) -->
   <div style="flex: 1; background-color: #f8f9fa; padding: 5px; border-radius: 5px; font-size: 12px;">
     <div style="text-align: center; font-weight: bold; margin-bottom: 8px;">Marital Status</div>
     <div style="display: flex; flex-direction: column; gap: 6px;">
@@ -1104,8 +866,6 @@ combined_legend <- sprintf('
       </div>
     </div>
   </div>
-  
-  <!-- Age Bands (2/3 width) -->
   <div style="flex: 2; background-color: #f8f9fa; padding: 5px; border-radius: 5px; font-size: 12px;">
     <div style="text-align: center; font-weight: bold; margin-bottom: 8px;">Age Band</div>
     <div style="display: flex; gap: 15px;">
@@ -1114,70 +874,91 @@ combined_legend <- sprintf('
     </div>
   </div>
 </div>
-', col1_html, col2_html)
+', col1_html_1, col2_html_1)
 
-shared_data_lines_points <- SharedData$new(
-  filtered_dataset |> filter(!(year %in% c(1995, 2000, 2005))),
-  group = "full_filter"
-)
+# Legend for Graph 2 (simpler since only "All" age band)
+combined_legend_2 <- '
+<div style="display: flex; width: 100%; gap: 15px; margin-top: 20px; font-family: Arial, sans-serif;">
+  <div style="flex: 1; background-color: #f8f9fa; padding: 5px; border-radius: 5px; font-size: 12px;">
+    <div style="text-align: center; font-weight: bold; margin-bottom: 8px;">Marital Status</div>
+    <div style="display: flex; flex-direction: column; gap: 6px;">
+      <div style="display: flex; align-items: center; gap: 6px;">
+        <div style="width: 12px; height: 12px; background-color: #32CD32; border-radius: 3px;"></div>
+        <span>Single</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px;">
+        <div style="width: 12px; height: 12px; background-color: #1E90FF; border-radius: 3px;"></div>
+        <span>Married</span>
+      </div>
+      <div style="display: flex; align-items: center; gap: 6px;">
+        <div style="width: 12px; height: 12px; background-color: #FF4500; border-radius: 3px;"></div>
+        <span>Widowed/Divorced</span>
+      </div>
+    </div>
+  </div>
+</div>
+'
 
-# Plot
-p <- ggplot() +
+# Create Plot 1
+p1 <- ggplot() +
   geom_col(
-    data = shared_data,
+    data = shared_data_1,
     aes(
       x = factor(year),
       y = count,
-      fill = marital_status,  # Segments by marital status
-      group = interaction(labour_status, marital_status),  # Ensure the bars are grouped by both labour and marital status
+      fill = marital_status,
+      group = interaction(labour_status, marital_status),
       text = paste0(
         "Year: ", year,
         "<br>Marital Status: ", marital_status,
         "<br>Labour Status: ", labour_status,
-        "<br>Female Population: ", comma(count)
+        "<br>Age Band: ", age_band,
+        "<br>Count: ", comma(count),
+        "<br>Total: ", comma(total_count)
       )
     ),
-    position = position_dodge(width = 0.7),  # Keep the dodge position
+    position = position_dodge(width = 0.7),
     width = 0.6,
     colour = "white",
     size = 0.2,
-    alpha = 0.6  # Reduced alpha for better visibility of segments
+    alpha = 0.6
   ) +
   geom_line(
-    data = shared_data_lines_points,
+    data = shared_data_1,
     aes(
       x = as.factor(year),
-      y = fertility_rate * scale_factor,
+      y = fertility_rate * scale_factor_1,
       group = age_band,
       colour = age_band
     ),
-    size = 0.8,  # Reduced line size for a more subtle appearance
-    alpha = 0.6  # Reduced alpha for the line
+    size = 0.8,
+    alpha = 0.6
   ) +
   geom_point(
-    data = shared_data_lines_points,
+    data = shared_data_1,
     aes(
       x = as.factor(year),
-      y = fertility_rate * scale_factor,
+      y = fertility_rate * scale_factor_1,
       group = age_band,
       colour = age_band,
       text = paste0(
         "Year: ", year,
+        "<br>Age Band: ", age_band,
         "<br>Fertility Rate: ", round(fertility_rate, 2),
-        "<br>Unit: ", uom  # Added the unit of measurement (uom) to the hover tooltip
+        "<br>Unit: ", uom
       )
     ),
-    size = 0.5,  # Reduced point size
-    alpha = 0.6  # Reduced point alpha for subtlety
+    size = 0.5,
+    alpha = 0.6
   ) +
-  scale_fill_manual(values = marital_colors) +  # Apply custom colors for marital status
-  scale_colour_manual(values = age_colors) +  # Apply custom colors for age bands
+  scale_fill_manual(values = marital_colors) +
+  scale_colour_manual(values = age_colors_1) +
   scale_y_continuous(
     name = "Female Population (thousands)",
     labels = comma
   ) +
   labs(
-    title = "Fertility Rates vs Labour Participation",
+    title = "Fertility Rates vs Labour Participation (Age-Banded View)",
     subtitle = "Bars: Segmented by Marital Status; Points: Fertility Rates by Age Band",
     x = "Year",
     caption = "Source: SingStat & data.gov.sg"
@@ -1186,63 +967,205 @@ p <- ggplot() +
   theme(
     plot.title = element_text(face = "bold"),
     axis.text.x = element_text(angle = 45, hjust = 1),
-    legend.position = "none"  # No legend for now, as we've defined the colors manually
+    legend.position = "none"
   )
 
-# Plotly conversion (only points have tooltips)
-plotly_output <- ggplotly(p, tooltip = "text")  # Ensures the custom text in tooltips is used
+# Create Plot 2
+p2 <- ggplot() +
+  geom_col(
+    data = shared_data_2,
+    aes(
+      x = factor(year),
+      y = count,
+      fill = marital_status,
+      group = interaction(labour_status, marital_status),
+      text = paste0(
+        "Year: ", year,
+        "<br>Marital Status: ", marital_status,
+        "<br>Labour Status: ", labour_status,
+        "<br>Female Population: ", comma(count)
+      )
+    ),
+    position = position_dodge(width = 0.7),
+    width = 0.6,
+    colour = "white",
+    size = 0.2,
+    alpha = 0.6
+  ) +
+  geom_line(
+    data = shared_data_2_lines_points,
+    aes(
+      x = as.factor(year),
+      y = fertility_rate * scale_factor_2,
+      group = age_band,
+      colour = age_band
+    ),
+    size = 0.8,
+    alpha = 0.6
+  ) +
+  geom_point(
+    data = shared_data_2_lines_points,
+    aes(
+      x = as.factor(year),
+      y = fertility_rate * scale_factor_2,
+      group = age_band,
+      colour = age_band,
+      text = paste0(
+        "Year: ", year,
+        "<br>Fertility Rate: ", round(fertility_rate, 2),
+        "<br>Unit: ", uom
+      )
+    ),
+    size = 0.5,
+    alpha = 0.6
+  ) +
+  scale_fill_manual(values = marital_colors) +
+  scale_colour_manual(values = age_colors_2) +
+  scale_y_continuous(
+    name = "Female Population (thousands)",
+    labels = comma
+  ) +
+  labs(
+    title = "Fertility Rates vs Labour Participation (Overall View)",
+    subtitle = "Bars: Segmented by Marital Status; Points: Overall Fertility Rates",
+    x = "Year",
+    caption = "Source: SingStat & data.gov.sg"
+  ) +
+  theme_minimal() +
+  theme(
+    plot.title = element_text(face = "bold"),
+    axis.text.x = element_text(angle = 45, hjust = 1),
+    legend.position = "none"
+  )
 
-# Add vertical annotations for the years without data (1995, 2000, 2005)
-plotly_output <- plotly_output |> 
+# Convert to plotly
+plotly_output_1 <- ggplotly(p1, tooltip = "text") |> 
   layout(
     annotations = list(
-      list(
-        x = 5, y = 0, # for 1995 annotation
-        text = "No Data", 
-        showarrow = FALSE,
-        font = list(size = 12, color = "black", family = "Arial"),
-        textangle = 90,  # Rotate text vertically
-        xanchor = "center",
-        yanchor = "bottom"
-      ),
-      list(
-        x = 10, y = 0, # for 2000 annotation
-        text = "No Data", 
-        showarrow = FALSE,
-        font = list(size = 12, color = "black", family = "Arial"),
-        textangle = 90,  # Rotate text vertically
-        xanchor = "center",
-        yanchor = "bottom"
-      ),
-      list(
-        x = 15, y = 0, # for 2005 annotation
-        text = "No Data", 
-        showarrow = FALSE,
-        font = list(size = 12, color = "black", family = "Arial"),
-        textangle = 90,  # Rotate text vertically
-        xanchor = "center",
-        yanchor = "bottom"
-      )
+      list(x = 5, y = 0, text = "No Data", showarrow = FALSE,
+           font = list(size = 12, color = "black", family = "Arial"),
+           textangle = 90, xanchor = "center", yanchor = "bottom"),
+      list(x = 10, y = 0, text = "No Data", showarrow = FALSE,
+           font = list(size = 12, color = "black", family = "Arial"),
+           textangle = 90, xanchor = "center", yanchor = "bottom"),
+      list(x = 15, y = 0, text = "No Data", showarrow = FALSE,
+           font = list(size = 12, color = "black", family = "Arial"),
+           textangle = 90, xanchor = "center", yanchor = "bottom")
     )
   )
 
-# Final UI Layout with Footnote
+plotly_output_2 <- ggplotly(p2, tooltip = "text") |> 
+  layout(
+    annotations = list(
+      list(x = 5, y = 0, text = "No Data", showarrow = FALSE,
+           font = list(size = 12, color = "black", family = "Arial"),
+           textangle = 90, xanchor = "center", yanchor = "bottom"),
+      list(x = 10, y = 0, text = "No Data", showarrow = FALSE,
+           font = list(size = 12, color = "black", family = "Arial"),
+           textangle = 90, xanchor = "center", yanchor = "bottom"),
+      list(x = 15, y = 0, text = "No Data", showarrow = FALSE,
+           font = list(size = 12, color = "black", family = "Arial"),
+           textangle = 90, xanchor = "center", yanchor = "bottom")
+    )
+  )
+
+# JavaScript for toggle functionality
+toggle_js <- HTML('
+<script>
+function toggleGraph() {
+  var graph1 = document.getElementById("graph1-container");
+  var graph2 = document.getElementById("graph2-container");
+  var filters1 = document.getElementById("filters1-container");
+  var filters2 = document.getElementById("filters2-container");
+  var legend1 = document.getElementById("legend1-container");
+  var legend2 = document.getElementById("legend2-container");
+  var button = document.getElementById("toggle-button");
+  
+  if (graph1.style.display === "none") {
+    // Show Graph 1
+    graph1.style.display = "block";
+    graph2.style.display = "none";
+    filters1.style.display = "block";
+    filters2.style.display = "none";
+    legend1.style.display = "block";
+    legend2.style.display = "none";
+    button.innerHTML = "Switch to Overall View";
+  } else {
+    // Show Graph 2
+    graph1.style.display = "none";
+    graph2.style.display = "block";
+    filters1.style.display = "none";
+    filters2.style.display = "block";
+    legend1.style.display = "none";
+    legend2.style.display = "block";
+    button.innerHTML = "Switch to Age-Banded View";
+  }
+}
+</script>
+')
+
+# Final UI Layout with Toggle
 tagList(
+  toggle_js,
   div(
     style = "margin-bottom:20px;",
     h3("Interactive Fertility & Labour Plot"),
-    p("Use filters to explore age-banded female labour force counts and age-banded fertility rates.")
+    p("Use filters to explore connections between female population, labour, marital status counts and fertility rates."),
+    div(
+      style = "margin-top: 10px;",
+      tags$button(
+        id = "toggle-button",
+        onclick = "toggleGraph()",
+        style = "background-color: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 14px;",
+        "Switch to Overall View"
+      )
+    )
   ),
+  
+  # Filters for Graph 1
   div(
-    style = "display: flex; gap: 15px; margin-bottom: 20px;",
-    filter_marital,
-    filter_labour
+    id = "filters1-container",
+    style = "display: block;",
+    div(
+      style = "display: flex; gap: 15px; margin-bottom: 20px;",
+      filter_marital_1,
+      filter_labour_1,
+      filter_ageband_1
+    ),
+    div(
+      style = "margin-bottom: 20px;",
+      filter_year_1
+    )
   ),
+  
+  # Filters for Graph 2  
   div(
-    style = "margin-bottom: 20px;",
-    filter_year  # Add the year slider to the layout
+    id = "filters2-container",
+    style = "display: none;",
+    div(
+      style = "display: flex; gap: 15px; margin-bottom: 20px;",
+      filter_marital_2,
+      filter_labour_2
+    ),
+    div(
+      style = "margin-bottom: 20px;",
+      filter_year_2
+    )
   ),
-  plotly_output,
+  
+  # Graph 1 Container
+  div(
+    id = "graph1-container",
+    style = "display: block;",
+    plotly_output_1
+  ),
+  
+  # Graph 2 Container
+  div(
+    id = "graph2-container", 
+    style = "display: none;",
+    plotly_output_2
+  ),
   
   # Footnote Section
   div(
@@ -1251,19 +1174,38 @@ tagList(
     p("Source: data.gov.sg & SingStat")
   ),
   
-  # Custom Legend Section
-  HTML(combined_legend)  # Display the custom legend
+  # Legend for Graph 1
+  div(
+    id = "legend1-container",
+    style = "display: block;",
+    HTML(combined_legend_1)
+  ),
+  
+  # Legend for Graph 2
+  div(
+    id = "legend2-container",
+    style = "display: none;",
+    HTML(combined_legend_2)
+  )
 )
 ```
 
-**Summary of Improvements to weaknesses**
+
+**Summary of Improvements to Weaknesses**
+
+For *'Age-Banded View'*
 
 - **Extended Analysis**: Compared to the 2019–2023 analysis of the original, our visualisation expands the scope to **fertility rates from 1991 to 2022**.
 
-- **Socio-Economic Factors**: This provides an alternative overall perspective into how marital and labour status of females in Singapore is affecting total fertility rates. This plot is meant to reduce visual clutter by removing the dimension of age-bands.
+- **Socio-Economic Factors**: The original visualisation lacked explanatory power for Singapore’s fertility decline. This plot introduces dimensions like **female population** by age bands, allowing users to evaluate female **labour status** and **marital status**, revealing potential **causal relationships** between these factors and fertility rates.
+
+- **Age-Banded Fertility**: Instead of a single total fertility rate, this allows the user to inspect age-banded fertility rates for **age bands 15–49 in 5-year increments**. This highlights how fertility behaviour shifts across cohorts, potentially unveiling the reasons behind Singapore's declining fertility rate.
+
+For *'Overall View'*
+
+- **Socio-Economic Factors**: This provides an alternative overall perspective into how marital and labour status of females in Singapore is affecting total fertility rates. This plot is meant to reduce visual clutter by removing the dimension of age bands.
 
 ## Faceted Dashboard
-Built using the `ggiraph` library instead. This dashboard is meant for comparisons of marital status of female populations in and out of labour as well as age-banded fertility rates by using the hovering tooltip, on-click highlighting and lasso selection.
 
 ```{r, echo=TRUE, fig.width=12, fig.height=8}
 # Compute agg_counts and filter out "All" age band
@@ -1639,7 +1581,7 @@ Tests for a structural break in a regression model at a known point in time (199
 ```{r}
 #| label: tbl-8
 #| tbl-cap: "Statistical Significance Test Results"
-#| 
+
 # Build correlation_data (year-level)
 correlation_data <- final_dataset |>                  # uses long data
   filter(age_band == "All") |>                        # total fertility only
@@ -1741,7 +1683,7 @@ Overall, all four tests reinforce our groups storyline which is: **rising female
 | Team Member | Tasks |
 | --- | --- |
 | Guo Zi Qiang Robin | Data Engineering, references, creation of dodged & faceted visualisation |
-| Chew Tze Han |  |
+| Chew Tze Han | Outlier Detection, creation & refinement of comprehensive dodged bar and line plot visualisation|
 | Cheong Wai Hong Jared | Supported the data visualisation, Statistical Analysis, Key Findings & Insights, Summary Statistics, Statistical Significance Testing |
-| Akram | |
-| Gregory Tan |  |
+| Akram | Poster formatting & styling, Presenting to the Instructor |
+| Gregory Tan | Refine the Following Sections: Executive Summary, Introduction, Critical Analysis of Original Visualisation, Data Sources & Methodology, Data Quality Assessment, Data Integration & Final Dataset, Creation & Formatting of Poster |
