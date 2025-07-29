@@ -1,0 +1,20 @@
+project:
+  type: html
+
+website:
+  title: "AAI 1001 Project"
+  navbar:
+    left:
+      - href: AAI1001_Team07_Project.qmd
+        text: Home
+
+format:
+  html:
+    theme:
+      - journal
+      - brand
+    css: styles.css
+    toc: true
+
+
+
