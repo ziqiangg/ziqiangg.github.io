@@ -2,17 +2,16 @@ project:
   type: website
 
 website:
-  title: "hackathon"
+  title: "AAI1001 Project"
   navbar:
     left:
       - href: index.qmd
         text: Home
-      - about.qmd
 
 format:
   html:
     theme:
-      - cosmo
+      - journal
       - brand
     css: styles.css
     toc: true
