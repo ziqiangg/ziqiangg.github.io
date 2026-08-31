@@ -18,7 +18,7 @@ Plain HTML/CSS. No build step, no framework, no package manager, no dependencies
 - Commit messages: short, imperative (`add projects page`, not `Added Projects Page`).
 
 ## Workflow
-- Preview locally with `python3 -m http.server 8000` from inside `docs/`.
+- Local preview steps: see `SKILLS.md`.
 - Push to `main` to deploy — no CI needed.
 
 ## Design discipline (before calling any page "done")
