@@ -90,11 +90,11 @@ body > header {
 }
 
 /* Signature layout: a single "brief" panel — a document-style block with a
-   left accent rule and a monospace eyebrow label, instead of a generic
-   centered hero. */
+   monospace eyebrow label, instead of a generic centered hero. No border:
+   the left accent rule is reserved for clickable nav-cards, so a reader
+   doesn't mistake this static block for one. */
 .brief {
-  border-left: 3px solid var(--brief-accent);
-  padding: 0.25rem 0 0.25rem 1.5rem;
+  padding-block: 0.25rem;
   margin-block: 2rem;
 }
 
@@ -198,6 +198,41 @@ body > header {
   color: var(--pico-muted-color);
 }
 
+/* --- Primary nav-cards: the top-level entry points (e.g. "Find your system
+   type", "Browse the full control catalog"). Filled with a tinted accent
+   background and a full accent border, rather than the plain box + left
+   rule the secondary .nav-card grid uses below them - so the two calls to
+   action read as the primary path, not another item in a list. --- */
+.nav-card-primary {
+  display: block;
+  border: 1.5px solid var(--brief-accent);
+  border-radius: var(--pico-border-radius);
+  padding: 1.5rem 1.75rem;
+  text-decoration: none;
+  color: inherit;
+  background: color-mix(in srgb, var(--brief-accent) 10%, transparent);
+}
+
+.nav-card-primary:hover,
+.nav-card-primary:focus-visible {
+  background: color-mix(in srgb, var(--brief-accent) 20%, transparent);
+}
+
+.nav-card-primary .nav-card-title {
+  display: block;
+  font-family: var(--brief-mono);
+  font-weight: 600;
+  font-size: 1.05rem;
+  color: var(--brief-accent);
+  margin-bottom: 0.35rem;
+}
+
+.nav-card-primary .nav-card-meta {
+  display: block;
+  font-size: 0.85rem;
+  color: var(--pico-color);
+}
+
 /* --- Level chips: read-only weight badge (mandatory -> optional). Purely
    decorative wherever it sits next to a real control (a checkbox in the
    filter, or the ID/title text on a control card) - it never carries
@@ -245,6 +280,7 @@ body > header {
 .domain-tag {
   display: inline-flex;
   align-items: center;
+  gap: 0.35rem;
   font-family: var(--brief-mono);
   font-size: 0.7rem;
   padding: 0.15rem 0.45rem;
