@@ -21,7 +21,7 @@
 
   var TREE = {
     q1: {
-      question: "Is this a public-facing digital service tracked under WOGAA (not an internal/back-office system)?",
+      question: "Is this a public-facing digital service tracked under Whole‑of‑Government Application Analytics (WOGAA) and is not an internal/back-office system?",
       options: [
         { label: "Yes", next: "q2" },
         { label: "No", next: "q3" }
